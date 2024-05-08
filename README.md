@@ -1,9 +1,7 @@
 # Aero_request
 ## Video Demonstration
 
-<div style="text-align:center">
-    <img src="https://github.com/meriemjma/Aero_request/assets/130979570/7226c77f-a93d-439b-bf21-f465eb10fbae" alt="dronetest-ezgif com-resize">
-</div>
+![dronetest-ezgif com-video-to-gif-converter](https://github.com/meriemjma/Aero_request/assets/130979570/5ed77ce0-100f-42f1-98ec-341bb15b4f33)
 
 
 
