@@ -1,7 +1,8 @@
 # Aero_request
 ## Video Demonstration
+![dronetest-ezgif com-resize](https://github.com/meriemjma/Aero_request/assets/130979570/7226c77f-a93d-439b-bf21-f465eb10fbae)
 
-![Aerorequest Video Demonstration]([https://drive.google.com/uc?export=download&id=1lcrKSVlChxLouXsiahOHVl-hDnRWI8SD](https://drive.google.com/file/d/1lcrKSVlChxLouXsiahOHVl-hDnRWI8SD/view?usp=sharing))
+
 ## How to Play
 
 0. Make sure all libraries are installed (see setup section)
