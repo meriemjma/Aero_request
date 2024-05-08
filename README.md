@@ -1,8 +1,10 @@
 # Aero_request
 ## Video Demonstration
-<p align="center">
-![dronetest-ezgif com-resize](https://github.com/meriemjma/Aero_request/assets/130979570/7226c77f-a93d-439b-bf21-f465eb10fbae)
-</p>
+
+<div style="text-align:center">
+    <img src="https://github.com/meriemjma/Aero_request/assets/130979570/7226c77f-a93d-439b-bf21-f465eb10fbae" alt="dronetest-ezgif com-resize">
+</div>
+
 
 
 ## How to Play
