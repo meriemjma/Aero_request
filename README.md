@@ -1,7 +1,7 @@
 # Aero_request
 ## Video Demonstration
 
-![Aerorequest Video Demonstration](https://drive.google.com/uc?export=download&id=1lcrKSVlChxLouXsiahOHVl-hDnRWI8SD)
+![Aerorequest Video Demonstration]([https://drive.google.com/uc?export=download&id=1lcrKSVlChxLouXsiahOHVl-hDnRWI8SD](https://drive.google.com/file/d/1lcrKSVlChxLouXsiahOHVl-hDnRWI8SD/view?usp=sharing))
 ## How to Play
 
 0. Make sure all libraries are installed (see setup section)
