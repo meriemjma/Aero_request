@@ -37,16 +37,17 @@ class Aerorequest(gym.Env):
 
         # Calls the constructor of the superclass (gym.Env) to initialize the environment.
         super(Aerorequest, self).__init__()
-        
+
         # Set observation type attribute
         self.obs_type = obs_type
+
         # Game constants
         self.FPS = self.metadata["render_fps"]
         self.WIDTH = 650
         self.HEIGHT = 650
         self.gravity = 0.08
-        self.mass = 1 #Mass of the drone
-        self.arm = 25 #Length of the arm of the drone
+        self.mass = 1  # Mass of the drone
+        self.arm = 25  # Length of the arm of the drone
         self.time_limit = 100
         self.respawn_timer_max = 3
 
@@ -56,7 +57,6 @@ class Aerorequest(gym.Env):
         pygame.display.set_caption("Aerorequest Environment")
         self.FramePerSec = pygame.time.Clock()
         self.FramePerSec.tick(24)
-
 
         # Initialize player and target sprites
         self.load_sprites()
@@ -68,7 +68,7 @@ class Aerorequest(gym.Env):
         # Initialize player
         self.player = HumanPlayer()
 
-        # Define action space (thruster values)
+        # Define action space
         self.action_space = spaces.Discrete(4)
 
         # Define observation space based on observation type
@@ -76,7 +76,7 @@ class Aerorequest(gym.Env):
             self.observation_space = spaces.Box(low=0, high=255, shape=(64, 64, 3), dtype=np.uint8)
         elif obs_type == 'features':
             self.observation_space = spaces.Dict({
-                "player_position": spaces.Box(low=0, high=self.WIDTH, shape=(2,), dtype=np.float32),
+                "player_position": spaces.Box(low=-100000, high=100000, shape=(2,), dtype=np.float32),#to fix
                 "player_angle": spaces.Box(low=0, high=360, shape=(1,), dtype=np.float32),
                 "target_position": spaces.Box(low=0, high=self.WIDTH, shape=(2,), dtype=np.float32),
                 "score": spaces.Box(low=0, high=np.inf, shape=(1,), dtype=np.float32)
@@ -90,42 +90,23 @@ class Aerorequest(gym.Env):
         # Call reset to initialize the environment
         self.reset()
 
-
     def load_sprites(self):
         """
         Load player and target sprites.
         """
         # Loading player sprite
         self.player_width = 80
-        self.player_animation_speed = 0.3
-        self.player_animation = []
-        player_image = pygame.image.load(
-            os.path.join(
-                "C:\\Users\\Maryem\\Desktop\\Aero_request\\Aerorequest\\env\\ressources\\drone1.png"
-            )
-        )
-        player_image.convert()
-        self.player_animation.append(
-            pygame.transform.scale(player_image, (self.player_width, int(self.player_width * 0.30)))
-        )
+        player_image = pygame.image.load(os.path.join("C:\\Users\\Maryem\\Desktop\\Aero_request\\Aerorequest\\env\\ressources\\drone1.png"))
+        self.player_image = pygame.transform.scale(player_image, (self.player_width, int(self.player_width * 0.30)))
 
         # Loading target sprite
         self.target_width = 50
         self.target_height = 50
-        self.target_animation_speed = 0.1
-        self.target_animation = []
-        self.targets = []
-        self.score = 0  # Initialize score
+        target_image = pygame.image.load(os.path.join("C:\\Users\\Maryem\\Desktop\\Aero_request\\Aerorequest\\env\\ressources\\target1.png"))
+        self.target_image = pygame.transform.scale(target_image, (self.target_width, self.target_height))
+
+        self.targets = [] # To store positions of target
         self.spawn_target()
-        target_image = pygame.image.load(
-            os.path.join(
-                "C:\\Users\\Maryem\\Desktop\\Aero_request\\Aerorequest\\env\\ressources\\target1.png"
-            )
-        )
-        target_image.convert()
-        self.target_animation.append(
-            pygame.transform.scale(target_image, (self.target_width, self.target_height))
-        )
 
 
     def spawn_target(self):
@@ -150,26 +131,39 @@ class Aerorequest(gym.Env):
         Take a step in the environment.
 
         Args:
-            action (array): Action taken by the agent.
+            action (int): Action taken by the agent.
 
         Returns:
             observation (object): Agent's observation of the current environment.
             reward (float): Reward from the previous action.
-            done (bool): Whether the episode has ended, in which case further step() calls will return undefined results.
-            info (dict): Additional information.
+            done (bool): Whether the episode has ended
+            info (dict): Additional information.(Positions and distance).
         """
-        reward = 0  # to modify it later for RL agent
+        reward = 0.0  # to modify it later for RL agent
         done = False
         info = {}
-
+        # Initialize thruster_left and thruster_right with default values
+        thruster_left = self.player.thruster_mean
+        thruster_right = self.player.thruster_mean
         if not self.player.dead:
             # Initialize accelerations
             x_acceleration = 0
             y_acceleration = self.gravity
             angular_acceleration = 0
 
-            # Calculate propeller force in function of input
-            thruster_left, thruster_right = action
+            # Calculate propeller force based on action
+            if action == 0:  # UP
+                thruster_left = self.player.thruster_mean + self.player.thruster_amplitude
+                thruster_right = self.player.thruster_mean + self.player.thruster_amplitude
+            elif action == 1:  # DOWN
+                thruster_left = self.player.thruster_mean - self.player.thruster_amplitude
+                thruster_right = self.player.thruster_mean - self.player.thruster_amplitude
+            elif action == 2:  # LEFT
+                thruster_left = self.player.thruster_mean - self.player.diff_amplitude
+                thruster_right = self.player.thruster_mean
+            elif action == 3:  # RIGHT
+                thruster_left = self.player.thruster_mean
+                thruster_right = self.player.thruster_mean - self.player.diff_amplitude
 
             # Calculate accelerations according to Newton's laws of motion
             x_acceleration += (
@@ -224,7 +218,10 @@ class Aerorequest(gym.Env):
         # Update step count
         self.step_count += 1
 
-        return reward, done, info
+        observation = self._get_obs()
+        info = self._get_info()
+
+        return observation, reward, done, False, info
 
     def render(self, mode='human'):
         """
@@ -251,8 +248,7 @@ class Aerorequest(gym.Env):
         self.screen.fill((131, 176, 181))
 
         # Render player
-        player_sprite = self.player_animation[0]
-        player_copy = pygame.transform.rotate(player_sprite, self.player.angle)
+        player_copy = pygame.transform.rotate(self.player_image, self.player.angle)
         self.screen.blit(
             player_copy,
             (
@@ -261,24 +257,23 @@ class Aerorequest(gym.Env):
             ),
         )
 
-
         # Render target
-        target_sprite = self.target_animation[0] 
         target_pos = (
-            self.targets[0][0] - int(target_sprite.get_width() / 2),
-            self.targets[0][1] - int(target_sprite.get_height() / 2)
+            self.targets[0][0] - int(self.target_image.get_width() / 2),
+            self.targets[0][1] - int(self.target_image.get_height() / 2)
         )  # Calculate the position to draw the target sprite
-        self.screen.blit(target_sprite, target_pos) 
+        self.screen.blit(self.target_image, target_pos)
 
         # Render time and score on the left side
         font = pygame.font.SysFont(None, 36)
         time_text = font.render(f"Time: {int(self.time)}", True, (255, 255, 255))
-        score_text = font.render(f"Score: {self.score}", True, (255, 255, 255))  # Update score text
+        score_text = font.render(f"Score: {self.score}", True, (255, 255, 255))  
         self.screen.blit(time_text, (20, 20))
         self.screen.blit(score_text, (20, 60))
 
         pygame.display.update()
         self.FramePerSec.tick(self.FPS)
+
 
     def _render_rgb_array(self):
         """
@@ -287,6 +282,7 @@ class Aerorequest(gym.Env):
         Returns:
             np.array: Rendered image as an RGB array.
         """
+
         surface = pygame.surfarray.array3d(self.screen)
         return surface
 
@@ -297,38 +293,52 @@ class Aerorequest(gym.Env):
         Returns:
             tuple: Initial observation of the environment and additional information.
         """
-        try:
-            self.spawn_player()
+        self.spawn_player()
 
-            # Reset targets and score
-            self.targets = []
-            self.spawn_target()
-            self.score = 0
+        # Reset targets and score
+        self.targets = []
+        self.spawn_target()
+        self.score = 0
 
-            # Reset time and step count
-            self.time = 0
-            self.step_count = 0
+        # Reset time and step count
+        self.time = 0
+        self.step_count = 0
 
-            # Get observation and info
-            observation = self._get_obs()
-            info = self._get_info()
+        # Get observation and info
+        observation = self._get_obs()
+        info = self._get_info()
 
-            return observation, info
-        except Exception as e:
-            print(f"Error occurred during reset: {e}")
-        return None, {}
-    
+        if self.render_mode == "human":
+            self.render()
+
+        return observation, info
+
     def _get_obs(self):
         """
         Get the observation of the environment.
 
         Returns:
-            np.array: Array representing the agent's view of the environment as pixels.
+            np.array or dict: Observation of the environment based on the observation type.
         """
-        # Render the environment to get the observation
-        observation = self._render_rgb_array()
-        return observation
-
+        if self.obs_type == 'pixels':
+            # Render the environment to get the observation
+            observation = self._render_rgb_array()
+            # Convert the observation to a surface
+            observation_surface = pygame.surfarray.make_surface(observation)
+            # Resize the surface
+            observation_resized = pygame.transform.scale(observation_surface, (64, 64))
+            # Convert the resized surface back to a numpy array
+            observation_resized_np = pygame.surfarray.array3d(observation_resized)
+            return observation_resized_np
+        elif self.obs_type == 'features':
+            # Construct observation dictionary
+            observation = {
+                "player_position": np.array([self.player.x_position, self.player.y_position], dtype=np.float32),
+                "player_angle": np.array([self.player.angle], dtype=np.float32),
+                "target_position": np.array(self.targets[0], dtype=np.float32),
+                "score": np.array([self.score], dtype=np.float32)
+            }
+            return observation
 
     def _get_info(self):
         """
@@ -341,7 +351,6 @@ class Aerorequest(gym.Env):
         target_pos = np.array(self.targets[0])
         distance = np.linalg.norm(agent_pos - target_pos, ord=1)
         return {"distance": distance}
-        
 
     def close(self):
         """
@@ -349,29 +358,3 @@ class Aerorequest(gym.Env):
         """
         pygame.quit()
 
-"""
-if __name__ == "__main__":
-    env = Aerorequest()
-    env.load_sprites()  # Load player and target sprites
-
-    # Game loop
-    while True:
-        # Handle events
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                env.close()  # Close the Pygame window
-                sys.exit()
-
-        # Get actions for the player
-        if isinstance(env.player, HumanPlayer):
-            action = env.player.get_keyboard_actions()
-        else:
-            # Logic for other types of players (not human)
-            action = [] 
-
-        # Call step method to update player position
-        env.step(action)
-
-        # Render the environment
-        env.render()
-"""
