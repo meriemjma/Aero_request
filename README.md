@@ -16,8 +16,8 @@
    - Controls:
      - Up arrow key: Move the drone forward.
      - Down arrow key: Move the drone backward.
-     - Left arrow key: Rotate the drone counter-clockwise.
-     - Right arrow key: Rotate the drone clockwise.
+     - Left arrow key: Rotate the drone to the left.
+     - Right arrow key: Rotate the drone to the right.
 
 ## How To Use the Environment
 
