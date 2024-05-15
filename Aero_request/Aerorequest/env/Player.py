@@ -34,22 +34,22 @@ class HumanPlayer(Player):
 
     def get_keyboard_actions(self):
         """
-        Get the current thruster values based on keyboard input.
+        Get the current action based on keyboard input.
         
         Returns:
-            tuple: Thruster values for left and right thrusters.
+            int: Action corresponding to the pressed key.
         """
-        thruster_left = self.thruster_mean
-        thruster_right = self.thruster_mean
         pressed_keys = pygame.key.get_pressed()
+        
         if pressed_keys[pygame.K_UP]:
-            thruster_left += self.thruster_amplitude
-            thruster_right += self.thruster_amplitude
-        if pressed_keys[pygame.K_DOWN]:
-            thruster_left -= self.thruster_amplitude
-            thruster_right -= self.thruster_amplitude
-        if pressed_keys[pygame.K_LEFT]:
-            thruster_left -= self.diff_amplitude
-        if pressed_keys[pygame.K_RIGHT]:
-            thruster_right -= self.diff_amplitude
-        return thruster_left, thruster_right
+            return 0
+        elif pressed_keys[pygame.K_DOWN]:
+            return 1
+        elif pressed_keys[pygame.K_LEFT]:
+            return 2
+        elif pressed_keys[pygame.K_RIGHT]:
+            return 3
+        
+        
+        return -1  
+
