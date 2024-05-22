@@ -1,7 +1,7 @@
 # Aero_request
 ## Video Demonstration
 
-<img src="https://github.com/meriemjma/Aero_request/assets/130979570/e0d22009-3e47-42e6-9fa9-c406d63382e6" alt="pygame window 2024-05-22 11-47-20 (online-video-cutter com)" width="500" height="300">
+![pygame window 2024-05-22 11-47-20 (online-video-cutter com) (2)](https://github.com/meriemjma/Aero_request/assets/130979570/c5ec806f-6e75-4697-847e-dca72f3dfa5c)
 
 
 
