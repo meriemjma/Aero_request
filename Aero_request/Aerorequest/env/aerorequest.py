@@ -86,7 +86,7 @@ class Aerorequest(gym.Env):
         elif obs_type == 'features':
             self.observation_space = spaces.Dict({
                 "player_position": spaces.Box(low=0, high=self.HEIGHT, shape=(2,), dtype=np.float32),#to fix
-                "player_angle": spaces.Box(low=0, high=360, shape=(1,), dtype=np.float32),
+                "player_angle": spaces.Box(low=-360, high=360, shape=(1,), dtype=np.float32),
                 "target_position": spaces.Box(low=0, high=self.WIDTH, shape=(2,), dtype=np.float32),
                 "score": spaces.Box(low=0, high=np.inf, shape=(1,), dtype=np.float32)
             })
