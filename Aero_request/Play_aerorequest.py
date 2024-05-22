@@ -1,41 +1,18 @@
-import os
-import sys
-import pygame
-from Aerorequest.env.aerorequest import Aerorequest
-from Aerorequest.env.Player import HumanPlayer  # Import HumanPlayer class
-
-def main():
-    current_dir = os.path.dirname(os.path.realpath(__file__))
-    env_dir = os.path.join(current_dir, 'Aerorequest', 'env')
-    sys.path.append(env_dir)
-
-    # Create the Aerorequest environment
-    env = Aerorequest()
-
-    # Load player and target sprites
-    env.load_sprites()
-
-    # Game loop
-    while True:
-        # Handle events
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                env.close()  # Close the Pygame window
-                sys.exit()
-
-        # Get actions for the player
-        if isinstance(env.player, HumanPlayer):
-            action = env.player.get_keyboard_actions()
-        else:
-            # Logic for other types of players (not human)
-            action = []
-
-        # Call step method to update player position
-        env.step(action)
-
-        # Render the environment
-        env.render()
-
+import gym
+from gym.utils.play import play
+from Aerorequest.env import aerorequest
 
 if __name__ == "__main__":
-    main()
+    # Create the Aerorequest environment with rgb_array render mode
+    env = gym.make('Aerorequest_pixels_v0', render_mode="rgb_array")
+
+    # Define the keys to actions mapping
+    keys_to_actions = {
+        "w": 0,
+        "s": 1,
+        "a": 2,
+        "d": 3,
+    }
+
+    # Start the game loop
+    play(env, keys_to_action=keys_to_actions, noop=None)
