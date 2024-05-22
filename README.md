@@ -14,10 +14,10 @@
     python Play_aerorequest.py -use
     ```
    - Controls:
-     - Up arrow key: Move the drone forward.
-     - Down arrow key: Move the drone backward.
-     - Left arrow key: Rotate the drone to the left.
-     - Right arrow key: Rotate the drone to the right.
+     - W: Move the drone forward.
+     - S: Move the drone backward.
+     - A: Rotate the drone to the left.
+     - D: Rotate the drone to the right.
 
 ## How To Use the Environment
 
