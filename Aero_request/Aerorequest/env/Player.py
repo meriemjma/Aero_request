@@ -41,13 +41,13 @@ class HumanPlayer(Player):
         """
         pressed_keys = pygame.key.get_pressed()
         
-        if pressed_keys[pygame.K_UP]:
+        if pressed_keys[pygame.K_w]:
             return 0
-        elif pressed_keys[pygame.K_DOWN]:
+        elif pressed_keys[pygame.K_s]:
             return 1
-        elif pressed_keys[pygame.K_LEFT]:
+        elif pressed_keys[pygame.K_a]:
             return 2
-        elif pressed_keys[pygame.K_RIGHT]:
+        elif pressed_keys[pygame.K_d]:
             return 3
         
         
